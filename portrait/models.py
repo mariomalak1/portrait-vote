@@ -16,3 +16,4 @@ class Vote(models.Model):
 class Portrait(models.Model):
     name = models.CharField(max_length=150, unique=True)
     owner = models.ForeignKey(Django_User_Model, on_delete=models.CASCADE)
+    photo = models.ImageField(upload_to="Media/Portrait_photos")
