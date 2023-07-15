@@ -3,17 +3,24 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login as django_login
 
+from .models import UserProfile
+
 class RegisterSerializer(serializers.Serializer):
 	username = serializers.CharField(max_length=150)
 	password = serializers.CharField(max_length=250)
 	last_name = serializers.CharField(max_length=100, required=False)
 	first_name = serializers.CharField(max_length=100, required=False)
+	photo = serializers.ImageField(required=False)
 
 	def validate_username(self, username):
 		user = User.objects.filter(username=username).first()
 		if user:
 			raise serializers.ValidationError("this username is already taken")
 		return username
+
+	def validate(self, data):
+		print("data:", data)
+		return data
 
 	def create(self, validated_data):
 		new_user = User.objects.create(username=validated_data.get("username"))
@@ -23,6 +30,14 @@ class RegisterSerializer(serializers.Serializer):
 		if validated_data.get("first_name"):
 			new_user.first_name = validated_data.get("first_name")
 		new_user.save()
+
+		photo_file = validated_data.get("photo")
+		if photo_file:
+			profile_ = UserProfile.objects.create(user=new_user, photo=photo_file)
+			profile_.save()
+
+		return new_user
+
 
 class LoginSerializer(serializers.Serializer):
 	username = serializers.CharField(max_length=150)

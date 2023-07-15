@@ -29,11 +29,11 @@ def portraits(request):
                     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response({"error":"you must authorize"}, status=status.HTTP_403_FORBIDDEN)
 
-# 01c9ca14212da87aa50607aa33d042f88fc4f857
 
-# {
-#     "id": 1,
-#     "name": "First Portrait",
-#     "photo": "/media/Media/Portrait_photos/photo_%D9%A2%D9%A0%D9%A2%D9%A2-%D9%A0%D9%A8-%D9%A0%D9%A8_%D9%A0%D9%A3-%D9%A1%D9%A8-%D9%A5%D9%A2.jpg",
-#     "owner": 1
-# }
+@api_view(["GET", "POST"])
+def comments(request):
+    pass
+
+@api_view(["GET", "POST"])
+def votes(request):
+    pass

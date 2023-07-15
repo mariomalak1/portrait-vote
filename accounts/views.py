@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login as django_login
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -12,7 +11,9 @@ class RegisterView(APIView):
 	def post(self, request):
 		data = request.data
 		serializer = RegisterSerializer(data=data)
+		print(data)
 		if serializer.is_valid():
+			print(serializer.data)
 			# create new user in system
 			serializer.create(serializer.data)
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
