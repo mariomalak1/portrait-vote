@@ -18,10 +18,6 @@ class RegisterSerializer(serializers.Serializer):
 			raise serializers.ValidationError("this username is already taken")
 		return username
 
-	def validate(self, data):
-		print("data:", data)
-		return data
-
 	def create(self, validated_data):
 		new_user = User.objects.create(username=validated_data.get("username"))
 		new_user.set_password(validated_data.get("password"))

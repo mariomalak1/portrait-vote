@@ -134,6 +134,6 @@ REST_FRAMEWORK = {
     ],
 }
 
-MEDIA_ROOT = str(BASE_DIR) + '/media/'
+MEDIA_ROOT = str(BASE_DIR) + '/Media/'
 
-MEDIA_URL = '/media/'
+MEDIA_URL = '/Media/'
