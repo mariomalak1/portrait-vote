@@ -12,6 +12,7 @@ class RegisterView(APIView):
 	def post(self, request):
 		data = request.data
 		serializer = RegisterSerializer(data=data)
+		print(data)
 		if serializer.is_valid():
 			serializer.create(serializer.data)
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
