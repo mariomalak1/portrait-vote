@@ -9,9 +9,13 @@ class CommentsSerializer(serializers.ModelSerializer):
 class PortraitSerializer(serializers.ModelSerializer):
     comments = serializers.SerializerMethodField(read_only=True)
     votes = serializers.SerializerMethodField(read_only=True)
+    owner = serializers.SerializerMethodField()
     class Meta:
         model = Portrait_Model
         fields = "__all__"
+
+    def get_owner(self, instance):
+        return instance.owner.username
 
     def get_comments(self, instance):
         all_comments = Comment.objects.filter(portrait_id=instance.id).all()
