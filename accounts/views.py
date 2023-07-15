@@ -1,3 +1,4 @@
+import base64
 from django.contrib.auth import authenticate, login as django_login
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -10,15 +11,10 @@ from .serializers import RegisterSerializer, LoginSerializer
 class RegisterView(APIView):
 	def post(self, request):
 		data = request.data
-		image = data.get("image").file
-		print(dir(image))
 		serializer = RegisterSerializer(data=data)
 		if serializer.is_valid():
-			mutuble = serializer.data.copy()
-			mutuble["image"] = image
-			# create new user in system
-			serializer.create(mutuble)
-			return Response(mutuble, status=status.HTTP_201_CREATED)
+			serializer.create(serializer.data)
+			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		else:
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
