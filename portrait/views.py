@@ -11,7 +11,7 @@ from .serializers import PortraitSerializer, CommentsSerializer
 
 class Portratis(APIView):
     # permission_classes = [IsAuthenticated]
-    # authentication_classes = [SessionAuthentication, TokenAuthentication]
+    # authentication_classes = [TokenAuthentication]
 
     def get(self, request):
         portrait_objs = Portrait_Model.objects.all()
@@ -20,10 +20,9 @@ class Portratis(APIView):
 
     def post(self, request):
         mutible_data = request.data.copy()
-        mutible_data["owner"] = request.user
+        mutible_data["owner"] = request.user.id
         serializer = PortraitSerializer(data=mutible_data)
         if serializer.is_valid():
-            print(serializer.data)
             print(serializer.is_valid())
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)

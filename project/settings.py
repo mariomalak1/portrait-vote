@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 
     "rest_framework",
     "rest_framework.authtoken",
+    # 'corsheaders',
 
     "accounts",
     "portrait",
@@ -53,6 +54,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+
+    # 'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = "project.urls"
@@ -129,11 +132,18 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        "rest_framework.authentication.TokenAuthentication"
-    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
 }
 
 MEDIA_ROOT = str(BASE_DIR) + '/Media/'
 
 MEDIA_URL = '/Media/'
+
+# CORS_ORIGIN_ALLOW_ALL = False
+
+# Set the allowed origins for your frontend application
+# CORS_ORIGIN_WHITELIST = [
+#     'http://localhost:5173',  # Add the URL of your frontend application
+# ]
