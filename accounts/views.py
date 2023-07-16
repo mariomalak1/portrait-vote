@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 
+from .models import UserProfile
 from .serializers import RegisterSerializer, LoginSerializer
 # Create your views here.
 
@@ -12,7 +13,7 @@ class RegisterView(APIView):
 		data = request.data
 		serializer = RegisterSerializer(data=data)
 		if serializer.is_valid():
-			serializer.save()
+			serializer.create_user()
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		else:
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
