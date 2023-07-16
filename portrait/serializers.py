@@ -25,6 +25,3 @@ class PortraitSerializer(serializers.ModelSerializer):
     def get_votes(self, instance):
         vote_number = Vote.objects.filter(portrait_id=instance.id).count()
         return vote_number
-
-
-
