@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.authtoken.models import Token
+from rest_framework.decorators import api_view
 
 from portrait.views import CustomAuthentication
 from .models import UserProfile
@@ -29,7 +30,7 @@ class LoginView(APIView):
 		else:
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
+@api_view(["post"])
 def logout(request):
 	token_ = CustomAuthentication.get_token_or_none(request)
 	token_.delete()
