@@ -1,0 +1,4 @@
+1. create new user by pass unique username and password :optional -> image, last name, first name, email
+2. login with specific user by pass username, and password -> he will take token
+3. logout -> destroy the token you get it
+4.

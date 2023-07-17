@@ -23,6 +23,11 @@ class RegisterSerializer(serializers.ModelSerializer):
         user_.save()
         return user_
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ["username", "last_name", "first_name", "email", "image"]
+
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=150)

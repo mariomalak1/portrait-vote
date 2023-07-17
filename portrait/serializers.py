@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from .models import Portrait as Portrait_Model, Comment, Vote
 
+from accounts.serializers import UserSerializer
+
 class CommentsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
@@ -37,11 +39,15 @@ class PortraitSerializer(serializers.ModelSerializer):
                 field.required = False
         return super().is_valid(raise_exception=raise_exception)
 
-class VoteSerializer(serializers.ModelSerializer):
 
+class VoteSerializer(serializers.ModelSerializer):
+    voter = serializers.SerializerMethodField()
     class Meta:
         model = Vote
-        fields = "__all__"
+        fields = ["voter"]
+
+    def get_voter(self, instance):
+        return UserSerializer(instance.voter).data
 
 
 

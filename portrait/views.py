@@ -8,8 +8,7 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 from rest_framework.permissions import IsAuthenticated
 
 from .models import Portrait as Portrait_Model, Comment, Vote
-from .serializers import PortraitSerializer, CommentsSerializer
-
+from .serializers import PortraitSerializer, CommentsSerializer, VoteSerializer
 # Create your views here.
 
 class CustomAuthentication:
@@ -107,21 +106,20 @@ class VoteView(APIView):
             Vote.objects.create(portrait=portriat_obj, voter=token_.user)
             return Response({"message":f"Voted Done On {portriat_obj.name}"})
 
-    # # get all votes on specific portrait
-    # def get(self, request):
-    #     token_ = CustomAuthentication.get_token_or_none(request)
-    #     if not token_:
-    #         return Response({"error": "you must authorized"}, status=status.HTTP_401_UNAUTHORIZED)
-    #
-    #     portriat_obj = CommnetView.get_portrait_or_error(request)
-    #
-    #     if not isinstance(portriat_obj, Portrait_Model):
-    #         return Response({"error": str(portriat_obj)}, status=status.HTTP_404_NOT_FOUND)
-    #
-    #     votes = Portrait_Model.objects.filter(portriat_id=portriat_obj.id).all()
-    #     serializer =
-    #     return
+    # get all votes on specific portrait
+    def get(self, request):
+        token_ = CustomAuthentication.get_token_or_none(request)
+        if not token_:
+            return Response({"error": "you must authorized"}, status=status.HTTP_401_UNAUTHORIZED)
 
+        portriat_obj = CommnetView.get_portrait_or_error(request)
+
+        if not isinstance(portriat_obj, Portrait_Model):
+            return Response({"error": str(portriat_obj)}, status=status.HTTP_404_NOT_FOUND)
+
+        votes = Vote.objects.filter(portrait_id=portriat_obj.id).all()
+        serializer = VoteSerializer(votes, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class PortraitDetails(APIView):
     def get(self, request):
