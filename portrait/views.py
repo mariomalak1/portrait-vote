@@ -47,7 +47,6 @@ class Portratis(APIView):
 
 
 class CommnetView(APIView):
-
     # function to get portrait id and return it to post and get, patch
     def get_portrait_id(self, request):
         portrait_id_ = request.data.get("portrait_id")
@@ -58,6 +57,9 @@ class CommnetView(APIView):
             return e
 
     def post(self, request):
+        token_ = CustomAuthentication.get_token_or_none(request)
+        if not token_:
+            return Response({"error": "you must authorized"}, status=status.HTTP_401_UNAUTHORIZED)
 
         # get the portrait id
         portrait_id_ = self.get_portrait_id(request)
@@ -65,19 +67,15 @@ class CommnetView(APIView):
             return Response({"error": str(portrait_id_)}, status=status.HTTP_404_NOT_FOUND)
 
         mutible_data = request.data.copy()
-        token = mutible_data.get("token")
-        if token:
-            token = Token.objects.filter(key=token).first()
-            if token:
-                mutible_data["owner"] = token.user.id
-                mutible_data["portrait"] = portrait_id_
-                serializer = CommentsSerializer(data=mutible_data)
-                if serializer.is_valid():
-                    serializer.save()
-                    return Response(serializer.data, status=status.HTTP_201_CREATED)
-                else:
-                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        return Response({"error": "you must authorize"}, status=status.HTTP_403_FORBIDDEN)
+        mutible_data["owner"] = token_.user.id
+        mutible_data["portrait"] = portrait_id_
+        serializer = CommentsSerializer(data=mutible_data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "you must authorize"}, status=status.HTTP_401_UNAUTHORIZED)
 
     def get(self, request):
         portrait_id_ = self.get_portrait_id(request)
