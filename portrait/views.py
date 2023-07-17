@@ -46,7 +46,7 @@ class Portratis(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class CommnetView(APIView):
-    # function to get portrait id and return it to post and get, patch
+    # function to get portrait obj and return it to post and get, patch
     @staticmethod
     def get_portrait_or_error(request):
         portrait_id_ = request.data.get("portrait_id")
@@ -62,7 +62,7 @@ class CommnetView(APIView):
         if not token_:
             return Response({"error": "you must authorized"}, status=status.HTTP_401_UNAUTHORIZED)
 
-        # get the portrait id
+        # get the portrait obj
         portrait_obj = self.get_portrait_or_error(request)
         if not isinstance(portrait_obj, Portrait_Model):
             return Response({"error": str(portrait_obj)}, status=status.HTTP_404_NOT_FOUND)
@@ -107,19 +107,46 @@ class VoteView(APIView):
             Vote.objects.create(portrait=portriat_obj, voter=token_.user)
             return Response({"message":f"Voted Done On {portriat_obj.name}"})
 
+    # # get all votes on specific portrait
+    # def get(self, request):
+    #     token_ = CustomAuthentication.get_token_or_none(request)
+    #     if not token_:
+    #         return Response({"error": "you must authorized"}, status=status.HTTP_401_UNAUTHORIZED)
+    #
+    #     portriat_obj = CommnetView.get_portrait_or_error(request)
+    #
+    #     if not isinstance(portriat_obj, Portrait_Model):
+    #         return Response({"error": str(portriat_obj)}, status=status.HTTP_404_NOT_FOUND)
+    #
+    #     votes = Portrait_Model.objects.filter(portriat_id=portriat_obj.id).all()
+    #     serializer =
+    #     return
+
+
 class PortraitDetails(APIView):
     def get(self, request):
-        portrait_id = request.data.get("portrait_id")
-        portrait_obj = get_object_or_404(Portrait_Model, id=portrait_id)
+        # get the portrait obj
+        portrait_obj = CommnetView.get_portrait_or_error(request)
+        if not isinstance(portrait_obj, Portrait_Model):
+            return Response({"error": str(portrait_obj)}, status=status.HTTP_404_NOT_FOUND)
         serializer = PortraitSerializer(portrait_obj)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def patch(self, request):
-        portrait_id = request.data.get("portrait_id")
-        portrait_obj = get_object_or_404(Portrait_Model, id=portrait_id)
+        token_ = CustomAuthentication.get_token_or_none(request)
+        if not token_:
+            return Response({"error": "you must authorized"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        portrait_obj = CommnetView.get_portrait_or_error(request)
+        if not isinstance(portrait_obj, Portrait_Model):
+            return Response({"error": str(portrait_obj)}, status=status.HTTP_404_NOT_FOUND)
+
+        if portrait_obj.owner.id != token_.user.id:
+            return Response({"error":"You not Permetied to do that"}, status=status.HTTP_403_FORBIDDEN)
+
         serializer = PortraitSerializer(data=request.data, instance=portrait_obj, partial=True)
-
         if serializer.is_valid():
-            pass
-
-
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

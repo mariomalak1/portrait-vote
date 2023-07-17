@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 
+from portrait.views import CustomAuthentication
 from .models import UserProfile
 from .serializers import RegisterSerializer, LoginSerializer
 # Create your views here.
@@ -27,3 +28,13 @@ class LoginView(APIView):
 			return Response(token_dict, status=status.HTTP_200_OK)
 		else:
 			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+def logout(request):
+	token_ = CustomAuthentication.get_token_or_none(request)
+	token_.delete()
+	try:
+		django_logout_user(request)
+	except Exception as e:
+		print(e)
+	return Response(status=status.HTTP_200_OK)

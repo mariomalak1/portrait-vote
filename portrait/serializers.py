@@ -10,6 +10,7 @@ class PortraitSerializer(serializers.ModelSerializer):
     comments = serializers.SerializerMethodField(read_only=True)
     votes = serializers.SerializerMethodField(read_only=True)
     owner = serializers.SerializerMethodField()
+
     class Meta:
         model = Portrait_Model
         fields = "__all__"
@@ -29,6 +30,18 @@ class PortraitSerializer(serializers.ModelSerializer):
     def create_protrait(self, data_):
         self.validated_data["owner"] = data_.get("owner")
         return self.save()
+
+    def is_valid(self, raise_exception=False):
+        if self.partial:
+            for field in self.fields.values():
+                field.required = False
+        return super().is_valid(raise_exception=raise_exception)
+
+class VoteSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Vote
+        fields = "__all__"
 
 
 
