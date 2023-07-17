@@ -1,12 +1,15 @@
 from django.shortcuts import get_object_or_404
+from django.db.models import Count
 from rest_framework.decorators import api_view, APIView, authentication_classes
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+
 from .models import Portrait as Portrait_Model, Comment
 from .serializers import PortraitSerializer, CommentsSerializer
+
 # Create your views here.
 
 class CustomAuthentication:
@@ -24,11 +27,8 @@ class CustomAuthentication:
 
 
 class Portratis(APIView):
-    # permission_classes = [IsAuthenticated]
-    # authentication_classes = [TokenAuthentication]
-
     def get(self, request):
-        portrait_objs = Portrait_Model.objects.all()
+        portrait_objs = Portrait_Model.objects.annotate(vote_count=Count('votes')).order_by('-vote_count')
         serializer = PortraitSerializer(portrait_objs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -85,3 +85,21 @@ class CommnetView(APIView):
         comments = Comment.objects.filter(portrait_id=portrait_id_).all()
         serializer = CommentsSerializer(comments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class PortraitDetails(APIView):
+    def get(self, request):
+        portrait_id = request.data.get("portrait_id")
+        portrait_obj = get_object_or_404(Portrait_Model, id=portrait_id)
+        serializer = PortraitSerializer(portrait_obj)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def patch(self, request):
+        portrait_id = request.data.get("portrait_id")
+        portrait_obj = get_object_or_404(Portrait_Model, id=portrait_id)
+        serializer = PortraitSerializer(data=request.data, instance=portrait_obj, partial=True)
+
+        if serializer.is_valid():
+            pass
+
+

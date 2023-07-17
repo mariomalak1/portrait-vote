@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User as Django_User_Model
+from django.db.models import Count
 # Create your models here.
 
 class Comment(models.Model):

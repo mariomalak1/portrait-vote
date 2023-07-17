@@ -30,3 +30,5 @@ class PortraitSerializer(serializers.ModelSerializer):
         self.validated_data["owner"] = data_.get("owner")
         return self.save()
 
+
+
