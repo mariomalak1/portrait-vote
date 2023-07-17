@@ -36,8 +36,6 @@ class LoginSerializer(serializers.Serializer):
 
     def create_token(self, data, request):
         user = authenticate(username=data.get("username"), password=data.get("password"))
-        print(data.get("username"))
-        print(data.get("password"))
         django_login(request, user=user)
         token = Token.objects.filter(user=user).first()
         if not token:

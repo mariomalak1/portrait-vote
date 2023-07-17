@@ -9,6 +9,20 @@ from .models import Portrait as Portrait_Model, Comment
 from .serializers import PortraitSerializer, CommentsSerializer
 # Create your views here.
 
+class CustomAuthentication:
+    @staticmethod
+    def get_token_or_none(request):
+        authorization_header = request.META.get('HTTP_AUTHORIZATION')
+        if authorization_header:
+            # Split the header value to extract the token
+            auth_type, token = authorization_header.split(' ')
+            token_ = Token.objects.filter(key=token).first()
+            if token_:
+                return token_
+
+        return None
+
+
 class Portratis(APIView):
     # permission_classes = [IsAuthenticated]
     # authentication_classes = [TokenAuthentication]
@@ -19,15 +33,18 @@ class Portratis(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
+        token_ = CustomAuthentication.get_token_or_none(request)
+        if not token_:
+            return Response({"error": "you must authorized"}, status=status.HTTP_401_UNAUTHORIZED)
         mutible_data = request.data.copy()
-        mutible_data["owner"] = request.user.id
+        mutible_data["owner"] = token_.user
         serializer = PortraitSerializer(data=mutible_data)
         if serializer.is_valid():
-            print(serializer.is_valid())
-            serializer.save()
+            serializer.create_protrait(mutible_data)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class CommnetView(APIView):
 
@@ -41,6 +58,7 @@ class CommnetView(APIView):
             return e
 
     def post(self, request):
+
         # get the portrait id
         portrait_id_ = self.get_portrait_id(request)
         if not isinstance(portrait_id_, int):

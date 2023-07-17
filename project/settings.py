@@ -40,7 +40,7 @@ INSTALLED_APPS = [
 
     "rest_framework",
     "rest_framework.authtoken",
-    # 'corsheaders',
+    'corsheaders',
 
     "accounts",
     "portrait",
@@ -55,7 +55,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 
-    # 'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = "project.urls"
@@ -141,7 +141,12 @@ MEDIA_ROOT = str(BASE_DIR) + '/Media/'
 
 MEDIA_URL = '/Media/'
 
-# CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_ALLOW_ALL = True
+
+
+# CSRF_TRUSTED_ORIGINS = ['']
+
+# ALLOWED_HOSTS = ['IP', 'http://localhost:5173/']
 
 # Set the allowed origins for your frontend application
 # CORS_ORIGIN_WHITELIST = [
