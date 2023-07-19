@@ -144,6 +144,8 @@ MEDIA_URL = '/Media/'
 CORS_ORIGIN_ALLOW_ALL = True
 
 
+AUTH_USER_MODEL = "accounts.UserProfile"
+
 # CSRF_TRUSTED_ORIGINS = ['']
 
 # ALLOWED_HOSTS = ['IP', 'http://localhost:5173/']

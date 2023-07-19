@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
-from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login as django_login
 
 from .models import UserProfile
@@ -11,7 +10,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ["username", "password", "last_name", "first_name", "email", "image"]
 
     def validate_username(self, username):
-        user = User.objects.filter(username=username).first()
+        user = UserProfile.objects.filter(username=username).first()
         if user:
             raise serializers.ValidationError("this username is already taken")
         return username

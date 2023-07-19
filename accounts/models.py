@@ -1,10 +1,10 @@
 import os
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 from project import settings
 # Create your models here.
 
-class UserProfile(User):
+class UserProfile(AbstractUser):
     def upload_to(instance, filename):
         file_extension = filename.split(".")[-1]
         filename = instance.username + "." + file_extension

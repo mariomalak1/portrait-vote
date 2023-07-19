@@ -33,6 +33,8 @@ class LoginView(APIView):
 @api_view(["post"])
 def logout(request):
 	token_ = CustomAuthentication.get_token_or_none(request)
+	if token_ is None:
+		return Response(status=status.HTTP_401_UNAUTHORIZED)
 	token_.delete()
 	try:
 		django_logout_user(request)
