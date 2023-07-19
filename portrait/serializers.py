@@ -49,5 +49,7 @@ class VoteSerializer(serializers.ModelSerializer):
     def get_voter(self, instance):
         return UserSerializer(instance.voter).data
 
-
-
+class PortraitsVotedByUser(serializers.ModelSerializer):
+    class Meta:
+        model = Vote
+        fields = ["portrait"]

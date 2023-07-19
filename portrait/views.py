@@ -8,7 +8,7 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 from rest_framework.permissions import IsAuthenticated
 
 from .models import Portrait as Portrait_Model, Comment, Vote
-from .serializers import PortraitSerializer, CommentsSerializer, VoteSerializer
+from .serializers import PortraitSerializer, CommentsSerializer, VoteSerializer, PortraitsVotedByUser
 # Create your views here.
 
 class CustomAuthentication:
@@ -148,3 +148,13 @@ class PortraitDetails(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(["GET"])
+def get_all_porteaits_voted_by_user(request):
+    token_ = CustomAuthentication.get_token_or_none(request)
+    if not token_:
+        return Response({"error": "you must authorized"}, status=status.HTTP_401_UNAUTHORIZED)
+    votes = Vote.objects.filter(voter=token_.user).all()
+    serializer = PortraitsVotedByUser(votes, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
