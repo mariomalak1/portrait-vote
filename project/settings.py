@@ -142,15 +142,10 @@ MEDIA_ROOT = str(BASE_DIR) + '/Media/'
 MEDIA_URL = '/Media/'
 
 CORS_ORIGIN_ALLOW_ALL = True
-
-
-AUTH_USER_MODEL = "accounts.UserProfile"
-
-# CSRF_TRUSTED_ORIGINS = ['']
-
-# ALLOWED_HOSTS = ['IP', 'http://localhost:5173/']
+CORS_ALLOW_CREDENTIALS = True
 
 # Set the allowed origins for your frontend application
-# CORS_ORIGIN_WHITELIST = [
-#     'http://localhost:5173',  # Add the URL of your frontend application
-# ]
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:5173', "https://corsproxy.io",]
+
+AUTH_USER_MODEL = "accounts.UserProfile"
