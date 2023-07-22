@@ -14,7 +14,8 @@ from .serializers import PortraitSerializer, CommentsSerializer, VoteSerializer,
 class CustomAuthentication:
     @staticmethod
     def get_token_or_none(request):
-        authorization_header = request.META.get('Authorization')
+        authorization_header = request.META.get('HTTP_AUTHORIZATION')
+        print(authorization_header)
         if authorization_header:
             try:
                 # Split the header value to extract the token
