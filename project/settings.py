@@ -40,7 +40,9 @@ INSTALLED_APPS = [
 
     "rest_framework",
     "rest_framework.authtoken",
+
     'corsheaders',
+    'drf_yasg',
 
     "accounts",
     "portrait",
@@ -131,6 +133,9 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+AUTH_USER_MODEL = "accounts.UserProfile"
+
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
@@ -148,4 +153,14 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:5173', "https://corsproxy.io",]
 
-AUTH_USER_MODEL = "accounts.UserProfile"
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'basic': {
+            'type': 'basic'
+        }
+    },
+    'USE_SESSION_AUTH': False,  # Set to True if you're using session-based authentication
+    'JSON_EDITOR': True,  # Set to True if you want a JSON editor for the request/response body
+    'SHOW_REQUEST_HEADERS': True,  # Set to True to show request headers in the Swagger UI
+}
+

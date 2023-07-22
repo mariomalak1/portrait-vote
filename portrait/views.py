@@ -16,11 +16,14 @@ class CustomAuthentication:
     def get_token_or_none(request):
         authorization_header = request.META.get('HTTP_AUTHORIZATION')
         if authorization_header:
-            # Split the header value to extract the token
-            auth_type, token = authorization_header.split(' ')
-            token_ = Token.objects.filter(key=token).first()
-            if token_:
-                return token_
+            try:
+                # Split the header value to extract the token
+                auth_type, token = authorization_header.split(' ')
+                token_ = Token.objects.filter(key=token).first()
+                if token_:
+                    return token_
+            except:
+                return None
 
         return None
 
@@ -57,7 +60,6 @@ class CommnetView(APIView):
 
     def post(self, request):
         token_ = CustomAuthentication.get_token_or_none(request)
-        print(token_)
         if not token_:
             return Response({"error": "you must authorized"}, status=status.HTTP_401_UNAUTHORIZED)
 
