@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
 
     'corsheaders',
-    'drf_yasg',
+    # 'drf_yasg',
 
     "accounts",
     "portrait",
@@ -153,14 +153,14 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:5173', "https://corsproxy.io",]
 
-SWAGGER_SETTINGS = {
-    'SECURITY_DEFINITIONS': {
-        'basic': {
-            'type': 'basic'
-        }
-    },
-    'USE_SESSION_AUTH': False,  # Set to True if you're using session-based authentication
-    'JSON_EDITOR': True,  # Set to True if you want a JSON editor for the request/response body
-    'SHOW_REQUEST_HEADERS': True,  # Set to True to show request headers in the Swagger UI
-}
+# SWAGGER_SETTINGS = {
+#     'SECURITY_DEFINITIONS': {
+#         'basic': {
+#             'type': 'basic'
+#         }
+#     },
+#     'USE_SESSION_AUTH': False,  # Set to True if you're using session-based authentication
+#     'JSON_EDITOR': True,  # Set to True if you want a JSON editor for the request/response body
+#     'SHOW_REQUEST_HEADERS': True,  # Set to True to show request headers in the Swagger UI
+# }
 
