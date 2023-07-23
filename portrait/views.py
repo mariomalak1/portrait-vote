@@ -14,18 +14,23 @@ from .serializers import PortraitSerializer, CommentsSerializer, VoteSerializer,
 class CustomAuthentication:
     @staticmethod
     def get_token_or_none(request):
-        authorization_header = request.META.get('HTTP_AUTHORIZATION')
-        if authorization_header:
-            try:
-                # Split the header value to extract the token
-                auth_type, token = authorization_header.split(' ')
-            except:
-                token = authorization_header
+        authorization_header = request.META.get('HTTP_TOKEN')
+        if not authorization_header:
+            authorization_header = request.data.get("token")
+            if not authorization_header:
+                return None
 
-            if token:
-                token_ = Token.objects.filter(key=token).first()
-                if token_:
-                    return token_
+        try:
+            # Split the header value to extract the token
+            auth_type, token = authorization_header.split(' ')
+        except:
+            token = authorization_header
+
+        if token:
+            token_ = Token.objects.filter(key=token).first()
+            if token_:
+                return token_
+
         return None
 
 
