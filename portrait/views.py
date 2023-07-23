@@ -15,17 +15,17 @@ class CustomAuthentication:
     @staticmethod
     def get_token_or_none(request):
         authorization_header = request.META.get('HTTP_AUTHORIZATION')
-        print(authorization_header)
         if authorization_header:
             try:
                 # Split the header value to extract the token
                 auth_type, token = authorization_header.split(' ')
+            except:
+                token = authorization_header
+
+            if token:
                 token_ = Token.objects.filter(key=token).first()
                 if token_:
                     return token_
-            except:
-                return None
-
         return None
 
 
