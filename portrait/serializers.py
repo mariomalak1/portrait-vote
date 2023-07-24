@@ -1,8 +1,16 @@
 from rest_framework import serializers
+
 from .models import Portrait as Portrait_Model, Comment, Vote
 from accounts.serializers import UserSerializer
+from accounts.models import UserProfile
 
 class CommentsSerializer(serializers.ModelSerializer):
+    owner = serializers.SerializerMethodField()
+
+    def get_owner(self, instance):
+        user_serializer = UserSerializer(instance.owner)
+        return user_serializer.data
+
     class Meta:
         model = Comment
         fields = '__all__'
@@ -10,11 +18,22 @@ class CommentsSerializer(serializers.ModelSerializer):
 class PortraitSerializer(serializers.ModelSerializer):
     comments = serializers.SerializerMethodField(read_only=True)
     votes = serializers.SerializerMethodField(read_only=True)
-    owner = serializers.SerializerMethodField()
+    owner = serializers.SerializerMethodField(read_only=True)
+    voted = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Portrait_Model
         fields = "__all__"
+
+    def get_voted(self, instance):
+        if self.context:
+            user_request = self.context["user_request"]
+            if user_request:
+                for vote in instance.votes.all():
+                    if vote.voter == user_request:
+                        return 1
+        return 0
+
 
     def get_owner(self, instance):
         owner_serializer = UserSerializer(instance.owner)

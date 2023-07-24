@@ -33,11 +33,14 @@ class CustomAuthentication:
 
         return None
 
-
 class Portratis(APIView):
     def get(self, request):
         portrait_objs = Portrait_Model.objects.annotate(vote_count=Count('votes')).order_by('-vote_count')
-        serializer = PortraitSerializer(portrait_objs, many=True)
+        token = CustomAuthentication.get_token_or_none(request)
+        user_ = None
+        if token:
+            user_ = token.user
+        serializer = PortraitSerializer(portrait_objs, many=True, context={"user_request":user_})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
@@ -50,6 +53,40 @@ class Portratis(APIView):
         if serializer.is_valid():
             serializer.create_protrait(mutible_data)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class PortraitDetails(APIView):
+    def get(self, request):
+        # get the portrait obj
+        portrait_obj = CommnetView.get_portrait_or_error(request)
+        if not isinstance(portrait_obj, Portrait_Model):
+            return Response({"error": str(portrait_obj)}, status=status.HTTP_404_NOT_FOUND)
+
+        token = CustomAuthentication.get_token_or_none(request)
+        user_ = None
+        if token:
+            user_ = token.user
+
+        serializer = PortraitSerializer(portrait_obj, context={"user_request":user_})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def patch(self, request):
+        token_ = CustomAuthentication.get_token_or_none(request)
+        if not token_:
+            return Response({"error": "you must authorized"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        portrait_obj = CommnetView.get_portrait_or_error(request)
+        if not isinstance(portrait_obj, Portrait_Model):
+            return Response({"error": str(portrait_obj)}, status=status.HTTP_404_NOT_FOUND)
+
+        if portrait_obj.owner.id != token_.user.id:
+            return Response({"error":"You not Permetied to do that"}, status=status.HTTP_403_FORBIDDEN)
+
+        serializer = PortraitSerializer(data=request.data, instance=portrait_obj, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -128,34 +165,6 @@ class VoteView(APIView):
         votes = Vote.objects.filter(portrait_id=portriat_obj.id).all()
         serializer = VoteSerializer(votes, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-class PortraitDetails(APIView):
-    def get(self, request):
-        # get the portrait obj
-        portrait_obj = CommnetView.get_portrait_or_error(request)
-        if not isinstance(portrait_obj, Portrait_Model):
-            return Response({"error": str(portrait_obj)}, status=status.HTTP_404_NOT_FOUND)
-        serializer = PortraitSerializer(portrait_obj)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def patch(self, request):
-        token_ = CustomAuthentication.get_token_or_none(request)
-        if not token_:
-            return Response({"error": "you must authorized"}, status=status.HTTP_401_UNAUTHORIZED)
-
-        portrait_obj = CommnetView.get_portrait_or_error(request)
-        if not isinstance(portrait_obj, Portrait_Model):
-            return Response({"error": str(portrait_obj)}, status=status.HTTP_404_NOT_FOUND)
-
-        if portrait_obj.owner.id != token_.user.id:
-            return Response({"error":"You not Permetied to do that"}, status=status.HTTP_403_FORBIDDEN)
-
-        serializer = PortraitSerializer(data=request.data, instance=portrait_obj, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(["GET"])
 def get_all_porteaits_voted_by_user(request):
