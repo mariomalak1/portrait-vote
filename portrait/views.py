@@ -109,10 +109,10 @@ class VoteView(APIView):
 
         if vote_on_portrait:
             vote_on_portrait.delete()
-            return Response({"message":f"Voted removed from {portriat_obj.name}"})
+            return Response({"message":0})
         else:
             Vote.objects.create(portrait=portriat_obj, voter=token_.user)
-            return Response({"message":f"Voted Done On {portriat_obj.name}"})
+            return Response({"message":1})
 
     # get all votes on specific portrait
     def get(self, request):
