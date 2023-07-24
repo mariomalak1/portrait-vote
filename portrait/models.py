@@ -17,7 +17,7 @@ class Vote(models.Model):
 
 
 class Portrait(models.Model):
-    name = models.CharField(max_length=150, unique=True)
+    name = models.CharField(max_length=150)
     owner = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     description = models.TextField(null=False)
     photo = models.URLField(null=False)
