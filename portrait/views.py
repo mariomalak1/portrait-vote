@@ -57,7 +57,7 @@ class CommnetView(APIView):
     # function to get portrait obj and return it to post and get, patch
     @staticmethod
     def get_portrait_or_error(request):
-        portrait_id_ = request.data.get("portrait_id")
+        portrait_id_ = request.GET.get("portrait_id")
         try:
             portrait_obj = get_object_or_404(Portrait_Model, id=portrait_id_)
             return portrait_obj
