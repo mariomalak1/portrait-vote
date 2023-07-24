@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from .models import Portrait as Portrait_Model, Comment, Vote
-
 from accounts.serializers import UserSerializer
 
 class CommentsSerializer(serializers.ModelSerializer):
@@ -18,7 +17,8 @@ class PortraitSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def get_owner(self, instance):
-        return instance.owner.username
+        owner_serializer = UserSerializer(instance.owner)
+        return owner_serializer.data
 
     def get_comments(self, instance):
         all_comments = Comment.objects.filter(portrait_id=instance.id).all()
