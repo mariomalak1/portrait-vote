@@ -15,6 +15,12 @@ class CommentsSerializer(serializers.ModelSerializer):
         model = Comment
         fields = '__all__'
 
+class NormalCommentsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = '__all__'
+
+
 class PortraitSerializer(serializers.ModelSerializer):
     comments = serializers.SerializerMethodField(read_only=True)
     votes = serializers.SerializerMethodField(read_only=True)

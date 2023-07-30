@@ -8,7 +8,7 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 from rest_framework.permissions import IsAuthenticated
 
 from .models import Portrait as Portrait_Model, Comment, Vote
-from .serializers import PortraitSerializer, CommentsSerializer, VoteSerializer, PortraitsVotedByUser
+from .serializers import PortraitSerializer, CommentsSerializer, VoteSerializer, PortraitsVotedByUser, NormalCommentsSerializer
 # Create your views here.
 
 class CustomAuthentication:
@@ -114,9 +114,9 @@ class CommnetView(APIView):
         mutible_data = request.data.copy()
         mutible_data["owner"] = token_.user.id
         mutible_data["portrait"] = portrait_obj.id
-        serializer = CommentsSerializer(data=mutible_data)
+        serializer = NormalCommentsSerializer(data=mutible_data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save()  # Save the serializer to create the instance first
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
