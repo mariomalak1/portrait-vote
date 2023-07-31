@@ -9,28 +9,8 @@ from rest_framework.permissions import IsAuthenticated
 
 from .models import Portrait as Portrait_Model, Comment, Vote
 from .serializers import PortraitSerializer, CommentsSerializer, VoteSerializer, PortraitsVotedByUser, NormalCommentsSerializer
+from accounts.views import CustomAuthentication
 # Create your views here.
-
-class CustomAuthentication:
-    @staticmethod
-    def get_token_or_none(request):
-        authorization_header = request.META.get('HTTP_AUTHORIZATION')
-        if not authorization_header:
-            authorization_header = request.data.get("token")
-            if not authorization_header:
-                return None
-        try:
-            # Split the header value to extract the token
-            auth_type, token = authorization_header.split(' ')
-        except:
-            token = authorization_header
-
-        if token:
-            token_ = Token.objects.filter(key=token).first()
-            if token_:
-                return token_
-
-        return None
 
 class Portratis(APIView):
     def get(self, request):
