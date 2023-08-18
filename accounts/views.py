@@ -76,6 +76,6 @@ def token_check_found(request):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     token_required = Token.objects.filter(key=token_).first()
     if token_required:
-        return Response(status=status.HTTP_302_FOUND)
+        return Response(status=status.HTTP_202_ACCEPTED)
     else:
         return Response(status=status.HTTP_404_NOT_FOUND)
