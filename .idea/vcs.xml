@@ -3,6 +3,7 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/ARTX-repo" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/FrontEnd/ARTX-repo" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/FrontEnd/ArtX" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/accounts/ARTX-repo" vcs="Git" />
   </component>

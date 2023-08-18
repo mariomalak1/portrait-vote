@@ -8,7 +8,6 @@ from rest_framework.decorators import api_view
 from .models import UserProfile
 from .serializers import RegisterSerializer, LoginSerializer
 
-
 # Create your views here.
 
 class CustomAuthentication:
@@ -50,7 +49,10 @@ class LoginView(APIView):
         serializer = LoginSerializer(data=data)
         if serializer.is_valid():
             token_dict = serializer.create_token(serializer.data, request)
-            return Response(token_dict, status=status.HTTP_200_OK)
+            if "error" in token_dict.keys():
+                return Response(token_dict, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response(token_dict, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -66,3 +68,14 @@ def logout(request):
     except Exception as e:
         print(e)
     return Response(status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+def token_check_found(request):
+    token_ = CustomAuthentication.get_token_or_none(request)
+    if token_ is None:
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+    token_required = Token.objects.filter(key=token_).first()
+    if token_required:
+        return Response(status=status.HTTP_302_FOUND)
+    else:
+        return Response(status=status.HTTP_404_NOT_FOUND)
